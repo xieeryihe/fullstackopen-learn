@@ -1,6 +1,6 @@
 const Header = (props) => <h1>{props.course}</h1>
 
-const Content = ({parts}) => {return parts.map(part => <Part part={part} key={part.name} />)}
+const Content = ({parts}) => parts.map(part => <Part part={part} key={part.name} />)
 
 const Part = ({part}) => <p>{part.name} {part.exercises}</p>
 
