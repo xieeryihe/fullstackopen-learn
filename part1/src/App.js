@@ -3,14 +3,18 @@ import { useState } from 'react'
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
 const Statistics = ({good, neutral, bad}) => {
-  let average = (good - bad) / 3
-  let sum = good+neutral+bad
-  let positive = sum ? good/sum*100 : 0
-  return (
+  let total = good+neutral+bad
+  let average = (good - bad) / total
+  let positive = total ? good/total*100 : 0
+
+  if(total === 0) return <div>No feedback given.</div>
+  else 
+    return (
     <>
       <div>{"good"} {good}</div>
       <div>{"neutral"} {neutral}</div>
       <div>{"bad"} {bad}</div>
+      <div>{"total"} {total}</div>
       <div>{"average"} {average}</div>
       <div>{"positive"} {positive}{"%"}</div>
     </>
