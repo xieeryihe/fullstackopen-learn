@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
+const StatisticLine = ({text, value}) => <div>{text} {value}</div>
+
 const Statistics = ({good, neutral, bad}) => {
   let total = good+neutral+bad
   let average = (good - bad) / total
@@ -11,12 +13,12 @@ const Statistics = ({good, neutral, bad}) => {
   else 
     return (
     <>
-      <div>{"good"} {good}</div>
-      <div>{"neutral"} {neutral}</div>
-      <div>{"bad"} {bad}</div>
-      <div>{"total"} {total}</div>
-      <div>{"average"} {average}</div>
-      <div>{"positive"} {positive}{"%"}</div>
+      <StatisticLine text={"good"} value={good}/>
+      <StatisticLine text={"neutral"} value={neutral}/>
+      <StatisticLine text={"bad"} value={bad}/>
+      <StatisticLine text={"total"} value={total}/>
+      <StatisticLine text={"average"} value={average}/>
+      <StatisticLine text={"positive"} value={positive.toString()+"%"}/>
     </>
   )
 }
@@ -28,7 +30,6 @@ const App = () => {
   const addGood = () => setGood(good+1)
   const addNeutral = () => setNeutral(neutral+1)
   const addBad = () => setBad(bad+1)
-
 
   return (
     <div>
