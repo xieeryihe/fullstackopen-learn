@@ -1,14 +1,11 @@
-const Course = ({course: {name, parts}}) => {
-    let sum = 0;
-    for (let i = 0;i < parts.length; i++){
-        sum += parts[i].exercises
-    }
+const Course = ({ course: { name, parts } }) => {
+    const total = parts.reduce((sum, part) => sum + part.exercises)
 
     return (
         <>
             <h1>{name}</h1>
             {parts.map((part, i) => <div key={i}>{part.name} {part.exercises}</div>)}
-            <div><strong>{`total of ${sum} exercises`}</strong></div>
+            <div><strong>{`total of ${total} exercises`}</strong></div>
         </>
     )
 }
