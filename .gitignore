@@ -1,21 +1,21 @@
 # dependencies
-/part*/node_modules
-/part*/.pnp
-/part*/.pnp.js
+/react-learn/node_modules
+/react-learn/.pnp
+/react-learn/.pnp.js
 
 # testing
-/part*/coverage
+/react-learn/coverage
 
 # production
-/part*/build
+/react-learn/build
 
 # misc
-/part*/.DS_Store
-/part*/.env.local
-/part*/.env.development.local
-/part*/.env.test.local
-/part*/.env.production.local
+/react-learn/.DS_Store
+/react-learn/.env.local
+/react-learn/.env.development.local
+/react-learn/.env.test.local
+/react-learn/.env.production.local
 
-/part*/npm-debug.log*
-/part*/yarn-debug.log*
-/part*/yarn-error.log*
+/react-learn/npm-debug.log*
+/react-learn/yarn-debug.log*
+/react-learn/yarn-error.log*
