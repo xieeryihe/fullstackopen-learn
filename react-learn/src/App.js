@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Note from './components/Note'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   const onNameChange = (event) => {
     const changedName = event.target.value
