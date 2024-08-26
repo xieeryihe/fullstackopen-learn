@@ -3,25 +3,38 @@ import axios from 'axios'
 import Note from './components/Note'
 
 const App = () => {
-  const [notes, setNotes] = useState([])
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas' }
+  ])
+  const [newName, setNewName] = useState('')
 
-  useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
-      })
-  }, [])
+  const onNameChange = (event) => {
+    const changedName = event.target.value
+    setNewName(changedName)
+  }
 
-  console.log('render', notes.length, 'notes')
+  const addName = (event) => {
+    event.preventDefault()
+    const newPerson = { name: newName }
+    setPersons(persons.concat(newPerson))
+    setNewName('')
+  }
 
   return (
     <div>
-      <h1>Notes</h1>
-      <ul>{notes.map(note => <Note key={note.id} note={note} />)}</ul>
+      <h2>Phonebook</h2>
+      <form onSubmit={addName}>
+        <div>
+          name: <input value={newName} onChange={onNameChange}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Members</h2>
+      {persons.map((person,i) => <div key={i}>{person.name}</div>)}
     </div>
   )
 }
+
 export default App
