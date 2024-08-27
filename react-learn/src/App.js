@@ -10,12 +10,18 @@ const App = () => {
   const addNote = (event) => {
     event.preventDefault()
     const targetNote = {
-      id: notes.length + 1,
+      id: notes.length,
       content: newNote,
+      date: new Date(),
       important: Math.random() < 0.5
     }
-    setNotes(notes.concat(targetNote))
-    setNewNote('')  // 清空输入栏
+
+    axios
+      .post('http://localhost:3001/notes', targetNote)
+      .then(response => {
+        setNotes(notes.concat(response.data))
+        setNewNote('')  // 清空输入栏
+      })
   }
 
   useEffect(() => {
