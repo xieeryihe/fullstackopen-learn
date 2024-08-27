@@ -1,43 +1,51 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const DetailedCountryInfo = ({country}) => {
+  return (
+    <div>
+      <h2>country.name.common</h2>
+    </div>
+  )
+}
+
+const CountryDisplay = ({countries}) => {
+  const len = countries.length
+  if (len === 1) {
+
+  }
+
+}
+
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
+  const [allCountries, setAllCountries] = useState([])
+  const [filteredCountries, setFilteredCountries] = useState([])
+  const [countryFilter, setCountryFilter] = useState('')
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/persons')
+      .get('https://restcountries.com/v3.1/all')
       .then(response => {
-        setPersons(response.data)
+        setAllCountries(response.data)
       })
   }, [])
 
-  const onNameChange = (event) => {
-    const changedName = event.target.value
-    setNewName(changedName)
-  }
+  // set 操作是异步的，使用 useEffect 来更新 filteredCountries
+  useEffect(() => {
+    const countries = allCountries.filter(country => 
+      country.name.common.toLowerCase().includes(countryFilter.toLowerCase()))
+    setFilteredCountries(countries);
+    console.log(countries);
+  }, [countryFilter])
 
-  const addName = (event) => {
-    event.preventDefault()
-    const newPerson = { name: newName }
-    setPersons(persons.concat(newPerson))
-    setNewName('')
+  const onCountryFilterChange = (event) => {
+    setCountryFilter(event.target.value)  
   }
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={onNameChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Members</h2>
-      {persons.map((person,i) => <div key={i}>{person.name}</div>)}
+      find countries <input value={countryFilter} onChange={onCountryFilterChange}/>
+      <CountryDisplay countries={filteredCountries}/>
     </div>
   )
 }
