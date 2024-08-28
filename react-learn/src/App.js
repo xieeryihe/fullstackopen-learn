@@ -10,7 +10,6 @@ const App = () => {
   const addNote = (event) => {
     event.preventDefault()
     const targetNote = {
-      id: notes.length,
       content: newNote,
       date: new Date(),
       important: Math.random() < 0.5
