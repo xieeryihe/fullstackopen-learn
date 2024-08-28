@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import phonebookServices from './services/phonebookServices'
+import phonebookService from './services/phonebookService'
 
-const Filter = ({newNameFilter, setNewNameFilter}) => {
+const Filter = ({nameFilter, setNameFilter}) => {
   const onNameFilterChange = (event) => {
     const changedName = event.target.value
-    setNewNameFilter(changedName)
+    setNameFilter(changedName)
   }
-  return <div>filter shown with <input value={newNameFilter} onChange={onNameFilterChange}/></div>
+  return <div>filter shown with <input value={nameFilter} onChange={onNameFilterChange}/></div>
 }
   
 const PersonForm = ({persons, setPersons}) => {
@@ -29,7 +29,7 @@ const PersonForm = ({persons, setPersons}) => {
       alert(`${newName} is already added to phonebook`)
     } else {
       const newPerson = { name: newName, number: newNumber }
-      phonebookServices.addContact(newPerson).then(person => {
+      phonebookService.addContact(newPerson).then(person => {
         setPersons(persons.concat(person))
         setNewName('')
         setNewNumber('')
@@ -51,30 +51,49 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const Persons = ({filteredPersons}) => 
-  <>{filteredPersons.map(person => <div key={person.name}>{person.name} {person.number}</div>)}</>
-  // map 方法需要确保返回一个包裹元素，否则渲染可能不会按预期工作。所以加了一个
+const Contacts = ({filteredPersons, persons, setPersons}) => {
+  const deleteContact = (targetContact) => {
+    if (window.confirm(`Delete ${targetContact.name}?`)) {
+      phonebookService.deleteContact(targetContact.id)
+        .then(deletedContact => {
+          console.log(deletedContact);
+          const newPersons = persons.filter(person => person.id !== deletedContact.id)
+          setPersons(newPersons)
+        })
+        .catch(error => 
+          console.error('Error:', error)
+        )
+    }
+  }
+
+  return filteredPersons.map(contact => 
+    <div key={contact.name}>
+      {contact.name} {contact.number}&nbsp;
+      <button onClick={() => deleteContact(contact)}> delete </button>
+    </div>
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [newNameFilter, setNewNameFilter] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
 
-  const filteredPersons = newNameFilter 
-    ? persons.filter(person => person.name.toLowerCase().includes(newNameFilter.toLowerCase()))
+  const filteredPersons = nameFilter 
+    ? persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
     : persons
 
   useEffect(() => {
-    phonebookServices.getAllContacts().then(allContacts => setPersons(allContacts))
+    phonebookService.getAllContacts().then(allContacts => setPersons(allContacts))
   }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter newNameFilter={newNameFilter} setNewNameFilter={setNewNameFilter}/>
+      <Filter nameFilter={nameFilter} setnameFilter={setNameFilter}/>
       <h3>add a new</h3>
       <PersonForm persons={persons} setPersons={setPersons}/>
       <h3>Members</h3>
-      <Persons filteredPersons={filteredPersons}/>
+      <Contacts filteredPersons={filteredPersons} persons={persons} setPersons={setPersons}/>
     </div>
   )
 }

@@ -14,7 +14,7 @@ const updateContact = (id, newObject) => {
 }
 
 const deleteContact = (id) => {
-    axios.delete(`${baseUrl}/${id}`).then(response => response.data)
+    return axios.delete(`${baseUrl}/${id}`).then(response => response.data)
 }
 
 const phonebookService = {
