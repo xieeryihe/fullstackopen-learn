@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebookService'
+import './index.css'
+
+const SUCCESS_TYPE = 'success'
+const ERROR_TYPE = 'error'
 
 const Filter = ({nameFilter, setNameFilter}) => {
   const onNameFilterChange = (event) => {
@@ -9,7 +13,7 @@ const Filter = ({nameFilter, setNameFilter}) => {
   return <div>filter shown with <input value={nameFilter} onChange={onNameFilterChange}/></div>
 }
   
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, setNotification}) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -38,14 +42,16 @@ const PersonForm = ({persons, setPersons}) => {
           setPersons(newPersons)
           setNewName('')
           setNewNumber('')
+          setNotification(`Update ${person.name}'s number from ${person.number} to ${contact.number}.`, SUCCESS_TYPE)
         })
       }
     } else {
       const newPerson = { name: newName, number: newNumber }
-      phonebookService.addContact(newPerson).then(person => {
-        setPersons(persons.concat(person))
+      phonebookService.addContact(newPerson).then(contact => {
+        setPersons(persons.concat(contact))
         setNewName('')
         setNewNumber('')
+        setNotification(`Add ${contact.name} with number ${contact.number}.`, SUCCESS_TYPE)
       })
     }
   }
@@ -64,7 +70,7 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const Contacts = ({filteredPersons, persons, setPersons}) => {
+const Contacts = ({filteredPersons, persons, setPersons, setNotification}) => {
   const deleteContact = (targetContact) => {
     if (window.confirm(`Delete ${targetContact.name}?`)) {
       phonebookService.deleteContact(targetContact.id)
@@ -72,10 +78,14 @@ const Contacts = ({filteredPersons, persons, setPersons}) => {
           console.log(deletedContact);
           const newPersons = persons.filter(person => person.id !== deletedContact.id)
           setPersons(newPersons)
+          setNotification(`Delete ${deletedContact.name}.`, SUCCESS_TYPE)
         })
-        .catch(error => 
+        .catch(error => {
           console.error('Error:', error)
-        )
+          const newPersons = persons.filter(person => person.id !== targetContact.id)
+          setPersons(newPersons)
+          setNotification(`Error:${error}`, ERROR_TYPE)
+        })
     }
   }
 
@@ -87,9 +97,23 @@ const Contacts = ({filteredPersons, persons, setPersons}) => {
   )
 }
 
+const Notification = ({message, type}) => {
+  if (message === null || message === '') {
+    return null
+  }
+  const className = `message ${type}`
+  return (
+    <div className={className}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
 
   const filteredPersons = nameFilter 
     ? persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
@@ -99,14 +123,22 @@ const App = () => {
     phonebookService.getAllContacts().then(allContacts => setPersons(allContacts))
   }, [])
 
+  const setNotification = (message, type) => {
+    setNotificationMessage(message)
+    setNotificationType(type)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} type={notificationType}/>
       <Filter nameFilter={nameFilter} setnameFilter={setNameFilter}/>
       <h3>add a new</h3>
-      <PersonForm persons={persons} setPersons={setPersons}/>
+      <PersonForm persons={persons} setPersons={setPersons} setNotification={setNotification}/>
       <h3>Members</h3>
-      <Contacts filteredPersons={filteredPersons} persons={persons} setPersons={setPersons}/>
+      <Contacts filteredPersons={filteredPersons} persons={persons} setPersons={setPersons} setNotification={setNotification}/>
     </div>
   )
 }
