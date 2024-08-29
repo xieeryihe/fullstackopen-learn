@@ -9,7 +9,7 @@ const addContact = newObject => {
     return axios.post(baseUrl, newObject).then(response => response.data)
 }
 
-const updateContact = (id, newObject) => {
+const updateContact = (id, newObject) => {    
     return axios.put(`${baseUrl}/${id}`, newObject).then(response => response.data)
 }
 
