@@ -19,3 +19,7 @@
 /react-learn/npm-debug.log*
 /react-learn/yarn-debug.log*
 /react-learn/yarn-error.log*
+
+
+# ------------
+/web-server/node_modules
