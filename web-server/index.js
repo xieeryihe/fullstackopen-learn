@@ -36,14 +36,27 @@ let notes = [
   }
 ]
 
+const generateId = () => {
+  const maxId = notes.length > 0
+    ? Math.max(...notes.map(n => n.id))
+    : 0
+  return maxId + 1
+}
+
+// =========
+
+
+// 默认路由
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
+// 获取所有笔记
 app.get('/api/notes', (request, response) => {
   response.json(notes)
 })
 
+// 获取单个笔记
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
   const note = notes.find(note => note.id === id)
@@ -54,19 +67,14 @@ app.get('/api/notes/:id', (request, response) => {
   }
 })
 
+// 删除笔记
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
   notes = notes.filter(note => note.id !== id)
   response.status(204).end()
 })
 
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => n.id))
-    : 0
-  return maxId + 1
-}
-
+// 添加笔记
 app.post('/api/notes', (request, response) => {
   const body = request.body
 
@@ -88,6 +96,32 @@ app.post('/api/notes', (request, response) => {
   response.json(note)
 })
 
+// 改
+app.put('/api/notes/:id', (request, response) => {
+  const id = Number(request.params.id); // 从请求参数中获取 id
+  const body = request.body
+  if (!body.content) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  const newNote = {
+    content: body.content,
+    important: body.important || false,
+    date: body.date,
+    id: id
+  }
+
+  // 查找需要更新的 note
+  const noteIndex = notes.findIndex(note => note.id === id)
+  if (noteIndex !== -1) {
+    notes[noteIndex] = newNote
+    response.json(notes[noteIndex])
+  } else {
+    response.status(404).send({ error: 'Note not found' })
+  }
+})
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
