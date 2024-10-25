@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
-
 app.use(express.json())
+
+const cors = require('cors')  // 跨域
+app.use(cors())
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
